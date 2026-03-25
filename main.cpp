@@ -16,56 +16,97 @@ rezultatul (admis/respins).
 */
 
 #include <iostream>
-#include <string>
-#include <fstream>
+#include <cstring>
 
+// CLASA CANDIDAT retine datele unui candidat (nume, prenume, varsta, medie bac)
 class Candidat {
-    std::string nume;
-    std::string prenume;
+    char* nume;
+    char* prenume;
     int varsta;
     float medie_bac;
 public:
-    Candidat() : varsta(0), medie_bac(0) {}
-    Candidat(const std::string& n, const std::string& p, const int& v, const float& m) : nume(n), prenume(p), varsta(v), medie_bac(m) {}
+    // constructor implicit
+    Candidat() : nume(nullptr), prenume(nullptr), varsta(0), medie_bac(0) {}
 
-    Candidat(const Candidat& c){
-        nume = c.nume;
-        prenume = c.prenume;
+    // constructor cu parametri
+    Candidat(const char* n, const char* p, int v, float m) {
+        nume = new char[strlen(n) + 1];
+        strcpy(nume, n);
+
+        prenume = new char[strlen(p) + 1];
+        strcpy(prenume, p);
+
+        varsta = v;
+        medie_bac = m;
+    }
+
+    // constructor de copiere
+    Candidat(const Candidat& c) {
+        nume = new char[strlen(c.nume) + 1];
+        strcpy(nume, c.nume);
+
+        prenume = new char[strlen(c.prenume) + 1];
+        strcpy(prenume, c.prenume);
+
         varsta = c.varsta;
         medie_bac = c.medie_bac;
     }
 
+
     Candidat& operator=(const Candidat& c) {
         if (this != &c) {
-            nume = c.nume;
-            prenume = c.prenume;
+            delete[] nume;
+            delete[] prenume;
+
+            nume = new char[strlen(c.nume) + 1];
+            strcpy(nume, c.nume);
+
+            prenume = new char[strlen(c.prenume) + 1];
+            strcpy(prenume, c.prenume);
+
             varsta = c.varsta;
             medie_bac = c.medie_bac;
         }
         return *this;
     }
 
-    ~Candidat() { std::cout<<"~Candidat"<<std::endl;}
+    // destructor obligatoriu pentru a elibera memoria alocata dinamic
+     ~Candidat() {
+        delete[] nume;
+        delete[] prenume;
+    }
 
-    void citire();
+    void citire() {
+        char b1[50], b2[50];
 
-    std::string getNume() const { return nume; }
-    std::string getPrenume() const { return prenume; }
+        std::cout << "Introduceti numele si prenumele candidatului: ";
+        std::cin >> b1 >> b2;
+
+        delete[] nume;
+        delete[] prenume;
+
+        nume = new char[strlen(b1) + 1];
+        strcpy(nume, b1);
+
+        prenume = new char[strlen(b2) + 1];
+        strcpy(prenume, b2);
+
+        std::cout << "Introduceti varsta candidatului: ";
+        std::cin >> varsta;
+
+        std::cout << "Introduceti media de bac a candidatului: ";
+        std::cin >> medie_bac;
+    }
+
+    // functie inline (optimizare acces)
+    inline float getMedie_bac() const { return medie_bac; }
+
+    const char* getNume() const { return nume; }
+    const char* getPrenume() const { return prenume; }
     int getVarsta() const { return varsta; }
-    float getMedie_bac() const { return medie_bac; }
-
 };
 
-void Candidat::citire() {
-    std::cout << "Introduceti numele si prenumele candidatului: ";
-    std::cin >> nume >> prenume;
-
-    std::cout << "Introduceti varsta candidatului: ";
-    std::cin >> varsta;
-
-    std::cout << "Introduceti media de bac a candidatului: ";
-    std::cin >> medie_bac;
-}
+// supraincarcare operator <<
 std::ostream& operator<<(std::ostream& out, const Candidat& c) {
     out << "Nume: " << c.getNume() << " " << c.getPrenume() << std::endl
         << "Varsta: " << c.getVarsta() << std::endl
@@ -73,19 +114,75 @@ std::ostream& operator<<(std::ostream& out, const Candidat& c) {
     return out;
 }
 
+/// CLASA FACULTATE retine informatii despre facultate
 class Facultate {
-    std::string nume;
-    std::string specializare;
-    std::string materie_examen;
+    char* nume;
+    char* specializare;
+    char* materie_examen;
     int nr_locuri;
     float medie_minima;
 public:
-    Facultate() : nr_locuri(0), medie_minima(0) {}
-    Facultate(const std::string& n, const std::string& sp, const std::string& me,const int& nr,const float& med)  : nume(n), specializare (sp), materie_examen(me),  nr_locuri(nr), medie_minima(med) {}
+    Facultate() :  nume(nullptr), specializare(nullptr), materie_examen(nullptr), nr_locuri(0), medie_minima(0) {}
 
-    std::string getNume() const { return nume; }
-    std::string getMaterie_examen() const { return materie_examen; }
-    std::string getSpecializare() const { return specializare; }
+    // constructor cu parametri
+    Facultate(const char* n, const char* sp, const char* me, int nr, float med) {
+        nume = new char[strlen(n)+1];
+        strcpy(nume,n);
+        specializare = new char[strlen(sp)+1];
+        strcpy(specializare,sp);
+        materie_examen = new char[strlen(me)+1];
+        strcpy(materie_examen,me);
+        nr_locuri = nr;
+        medie_minima = med;
+    }
+
+    // destructor
+    ~Facultate(){
+        delete[] nume;
+        delete[] specializare;
+        delete[] materie_examen;
+    }
+
+    // constructor de copiere
+    Facultate(const Facultate& f){
+        nume = new char[strlen(f.nume) + 1];
+        strcpy(nume, f.nume);
+
+        specializare = new char[strlen(f.specializare) + 1];
+        strcpy(specializare, f.specializare);
+
+        materie_examen = new char[strlen(f.materie_examen) + 1];
+        strcpy(materie_examen, f.materie_examen);
+
+        nr_locuri = f.nr_locuri;
+        medie_minima = f.medie_minima;
+    }
+
+    Facultate& operator=(const Facultate& f) {
+        if (this != &f) {
+            delete[] nume;
+            delete[] specializare;
+            delete[] materie_examen;
+
+            nume = new char[strlen(f.nume) + 1];
+            strcpy(nume, f.nume);
+
+            specializare = new char[strlen(f.specializare) + 1];
+            strcpy(specializare, f.specializare);
+
+            materie_examen = new char[strlen(f.materie_examen) + 1];
+            strcpy(materie_examen, f.materie_examen);
+
+            nr_locuri = f.nr_locuri;
+            medie_minima = f.medie_minima;
+        }
+        return *this;
+    }
+
+
+    const char* getNume() const { return nume; }
+    const char* getMaterie_examen() const { return materie_examen; }
+    const char* getSpecializare() const { return specializare; }
     int getNr_locuri() const { return nr_locuri; }
     float getMedie_minima() const { return medie_minima; }
 
@@ -95,59 +192,105 @@ std::ostream& operator<<(std::ostream& out, const Facultate& f) {
     return out;
 }
 
+/// CLASA EXAMEN retine nota si materia examenului
 class Examen {
-    std::string materie;
+    char* materie;
     float nota;
 public:
-    Examen() : nota(0) {}
-    Examen(const std::string& m, const float& n) : materie(m), nota(n) {}
+    Examen() : materie(nullptr), nota(0) {}
+
+    // constructor cu parametri
+    Examen(const char* m, float n) {
+        materie = new char[strlen(m)+1];
+        strcpy(materie,m);
+        nota = n;
+    }
+
+    // constructor de copiere
+    Examen(const Examen& e) {
+        materie = new char[strlen(e.materie)+1];
+        strcpy(materie,e.materie);
+        nota = e.nota;
+    }
+
+    Examen& operator=(const Examen& e){
+        if(this!=&e){
+            delete[] materie;
+            materie = new char[strlen(e.materie)+1];
+            strcpy(materie,e.materie);
+            nota = e.nota;
+        }
+        return *this;
+    }
+
+    // destructor
+    ~Examen(){
+        delete[] materie;
+    }
+
 
     void citire();
-    std::string getMaterie() const { return materie; }
+
+    const char* getMaterie() const { return materie; }
     float getNota() const { return nota; }
 
 };
 
 void Examen::citire() {
-    std::cout << "Introduceti materia examenului: ";
-    std::cin >> materie;
+    char b[50];
+        std::cout<<"Introduceti materia examenului: ";
+        std::cin>>b;
 
-    std::cout << "Introduceti nota examenului: ";
-    std::cin >> nota;
+        delete[] materie;
+        materie = new char[strlen(b)+1];
+        strcpy(materie,b);
+
+        std::cout<<"Introduceti nota examenului: ";
+        std::cin>>nota;
 }
 std::ostream& operator<<(std::ostream& out, const Examen& e) {
     out << "Nota admitere: " << e.getNota() << " , materia: " << e.getMaterie() << std::endl;
     return out;
 }
 
+
+//  CLASA ADMITERE combina candidat + examen + facultate si calculeaza rezultatul
 class Admitere {
     Candidat candidat;
     Facultate facultate;
     Examen examen;
 
     float medie_admitere;
-    std::string rezultat;
+    char rezultat[20];
+    static int total;
 
+    // calculeaza media finala
     float calculeazaMedie() const {
         return 0.2 * candidat.getMedie_bac() + 0.8 * examen.getNota();
     }
 
 public:
-    Admitere() : medie_admitere(0) {}
+    Admitere() : medie_admitere(0) { strcpy(rezultat, ""); } // initializare string
+
+    // constructor cu parametri
     Admitere(const Candidat& c, const Facultate& f, const Examen& e): candidat(c), facultate(f), examen(e) {
         medie_admitere = calculeazaMedie();
+        total++;
     }
 
     float getMedie_admitere() const { return medie_admitere; }
+    const char* getRezultat() const { return rezultat; }
 
-    std::string getRezultat() const { return rezultat; }
-    void setRezultat( const std::string& r) {rezultat = r;}
+    // setter pentru rezultat (Admis / Respins)
+    void setRezultat( const char* r) {strcpy(rezultat,r);}
 
     friend bool verificareRezultat(Admitere& a);
 
     friend std::ostream& operator<<(std::ostream& out, const Admitere& a);
 };
+int Admitere::total = 0;
 
+// verifica daca un candidat este admis sau respins
 bool verificareRezultat(Admitere& a) {
     if ( a.candidat.getMedie_bac() < 1 || a.candidat.getMedie_bac() > 10) {
         std::cout << "Medie de bac invalida" << std::endl;
@@ -163,6 +306,7 @@ bool verificareRezultat(Admitere& a) {
         a.setRezultat("Respins");
     return true;
 }
+
 std::ostream& operator<<(std::ostream& out, const Admitere& a) {
     out << a.candidat << a.facultate << a.examen
         << "Medie de admitere : "<< a.getMedie_admitere() << ", candidat " << a.rezultat << std::endl;
@@ -170,13 +314,17 @@ std::ostream& operator<<(std::ostream& out, const Admitere& a) {
 }
 
 int main() {
+    // obiecte folosite pentru citire temporara
     Candidat candidat;
     Examen examen;
+
+    // vector de rezultate finale
     Admitere admitere[100];
 
-    int nrCandidati = 0;
-    int opt=1;
+    int nrCandidati = 0; // numarul total de candidati validati
+    int opt=1; // optiune
 
+    // initializare facultati disponibile
     Facultate facultati[5] = {
         Facultate("Facultatea de Informatica", "Calculatoare", "Informatica", 70, 7.5),
         Facultate("Facultatea de Matematica", "Matematica", "Matematica", 50, 7.0),
@@ -186,6 +334,36 @@ int main() {
     };
     int nrFacultati = 5;
 
+    // DATE PENTRU INTRODUCERE AUTOMATA
+    // array de candidati
+    Candidat candidati[10] = {
+        Candidat("Cristi", "Popescu", 21, 9.1),
+        Candidat("Ana", "Luca", 19, 8.7),
+        Candidat("Mihai", "Ionescu", 22, 7.5),
+        Candidat("Elena", "Marinescu", 20, 9.2),
+        Candidat("Andrei", "Georgescu", 21, 8.0),
+        Candidat("Maria", "Stan", 20, 9.0),
+        Candidat("Ioana", "Radu", 19, 7.8),
+        Candidat("George", "Popa", 21, 6.9),
+        Candidat("Alina", "Matei", 20, 8.5),
+        Candidat("Stefan", "Florescu", 19, 5.1)
+    };
+    // array examene corespunzatoare
+    Examen examene[10] = {
+        Examen("Informatica", 8.5),
+        Examen("Matematica", 9.0),
+        Examen("Fizica", 6.5),
+        Examen("Chimie", 8.0),
+        Examen("Romana", 7.5),
+        Examen("Informatica", 9.0),
+        Examen("Matematica", 7.0),
+        Examen("Fizica", 6.0),
+        Examen("Chimie", 7.5),
+        Examen("Romana", 6.8)
+    };
+    int n = 10; // numar candidati
+
+    // meniu principal al programului
     while(opt != 0){
         std::cout << "1 Adauga candidati automat\n";
         std::cout << "2 Adauga candidat manual\n";
@@ -195,31 +373,26 @@ int main() {
         std::cin >> opt;
 
         if(opt == 1) {
-            std::ifstream f("date.txt");
 
-            if(!f) {
-                std::cout << "Eroare la deschiderea fisierului!\n";
-                continue;
-            }
-
-            int n;
-            f >> n;
-
+            // citirea fiecarui candidat
             for(int k = 0; k < n; k++) {
-                std::string nume, prenume, materie;
+                char nume[50],prenume[50],materie[50];
                 int varsta;
                 float medie_bac, nota;
 
-                f >> nume >> prenume >> varsta >> medie_bac >> materie >> nota;
+                candidat = Candidat(candidati[k].getNume(),candidati[k].getPrenume(),candidati[k].getVarsta(),
+                    candidati[k].getMedie_bac());
 
-                candidat = Candidat(nume, prenume, varsta, medie_bac);
-                examen = Examen(materie, nota);
-
+                examen = Examen(examene[k].getMaterie(),examene[k].getNota());
                 bool gasit = false;
 
+                // cautam facultatea corespunzatoare
                 for(int i = 0; i < nrFacultati; i++){
-                    if(examen.getMaterie() == facultati[i].getMaterie_examen()){
+                    if(strcmp(examen.getMaterie(), facultati[i].getMaterie_examen())==0){
+
                         Admitere a = Admitere(candidat, facultati[i], examen);
+
+                        // validarea datelor si stabilirea rezultatului
                         if ( verificareRezultat(a) ) {
                             admitere[nrCandidati] = a;
                             nrCandidati++;
@@ -234,16 +407,20 @@ int main() {
                 }
             }
 
-            f.close();
         }
         if(opt == 2) {
             candidat.citire();
             examen.citire();
 
             bool gasit = false;
+
+            // cautam facultatea corespunzatoare
             for(int i = 0; i < nrFacultati; i++){
-                if(examen.getMaterie() == facultati[i].getMaterie_examen()){
+                if(strcmp(examen.getMaterie(), facultati[i].getMaterie_examen())==0){
+
                     Admitere a = Admitere(candidat, facultati[i], examen);
+
+                    // validarea datelor si stabilirea rezultatului
                     if ( verificareRezultat(a) ) {
                         admitere[nrCandidati] = a;
                         nrCandidati++;
@@ -257,6 +434,7 @@ int main() {
             }
         }
         if(opt == 3) {
+            // afisam toti candidatii validati
             for(int i = 0; i < nrCandidati; i++) {
                 std::cout << admitere[i];
                 std::cout << std::endl;
