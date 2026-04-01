@@ -1,4 +1,6 @@
-//Acest program simulează procesul de admitere la facultate.
+/*
+Acest program simulează procesul de admitere la facultate.
+*/
 
 #include <iostream>
 #include <cstring>
@@ -55,7 +57,7 @@ public:
         return *this;
     }
 
-    // destructor obligatoriu pentru a elibera memoria alocata dinamic
+    // destructor
      ~Candidat() {
         delete[] nume;
         delete[] prenume;
@@ -83,7 +85,7 @@ public:
         std::cin >> medie_bac;
     }
 
-    // functie inline (optimizare acces)
+    // functie inline
     inline float getMedie_bac() const { return medie_bac; }
 
     const char* getNume() const { return nume; }
@@ -110,7 +112,7 @@ public:
     Facultate() :  nume(nullptr), specializare(nullptr), materie_examen(nullptr), nr_locuri(0), medie_minima(0) {}
 
     // constructor cu parametri
-    Facultate(const char* n, const char* sp, const char* me, int nr, float med) {
+    Facultate(const char* n, const char* sp, const char* me, const int nr, const float med) {
         nume = new char[strlen(n)+1];
         strcpy(nume,n);
         specializare = new char[strlen(sp)+1];
@@ -246,7 +248,7 @@ class Admitere {
     Examen examen;
 
     float medie_admitere;
-    char rezultat[20];
+    char rezultat[20]{};
     static int total;
 
     // calculeaza media finala
@@ -361,9 +363,6 @@ int main() {
 
             // citirea fiecarui candidat
             for(int k = 0; k < n; k++) {
-                char nume[50],prenume[50],materie[50];
-                int varsta;
-                float medie_bac, nota;
 
                 candidat = Candidat(candidati[k].getNume(),candidati[k].getPrenume(),candidati[k].getVarsta(),
                     candidati[k].getMedie_bac());
@@ -388,7 +387,7 @@ int main() {
                 }
 
                 if(!gasit) {
-                    std::cout << "Nu exista facultate cu materia examenului introdus.\n" << materie << "\n";
+                    std::cout << "Nu exista facultate cu materia examenului introdus.\n";
                 }
             }
 
@@ -426,4 +425,3 @@ int main() {
             }
         }
     }
-}
